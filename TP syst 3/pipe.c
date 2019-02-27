@@ -12,15 +12,16 @@ int main ()
 
 	if (pipe(tube)==-1)
 	{
-		perror("Erreur lors de la création du tube : "); 
+		perror("Erreur lors de la crï¿½ation du tube : ");
 		exit(1);
 	}
 	if ((pid_fils=fork())==-1)
-	{ 
-		perror("Erreur dans la création du processus fils : ");
+	{
+		perror("Erreur dans la crï¿½ation du processus fils : ");
 		exit(2);
 	}
 
+	// si on est dans le pÃ¨re
 	if (pid_fils>0)
 	{
 		close(tube[IN]);

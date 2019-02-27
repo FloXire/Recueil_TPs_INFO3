@@ -1,2 +1,2 @@
-linkedList: linkedList.c
-	gcc -Wall -Wextra -o linkedList linkedList.c
+main: main.c ListeBloc.c
+	gcc -Wall -Wextra -o main main.c ListeBloc.c
