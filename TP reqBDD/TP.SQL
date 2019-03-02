@@ -312,3 +312,98 @@ explain plan for
 select * from ((select * from Unicode where lowercase like '00%')
     union all (select * from Unicode where lowercase like '02%'));
 -- L'optimiseur n'utilise que l'opérateur union all
+
+/* Liste complémentaire */
+
+-- Utilisation de l'opérateur BITMAP : opération à partir d'index bitmap
+
+-- Création des index
+create bitmap index IX_Bitmap_Mirrored on Unicode(mirrored);
+create bitmap index IX_Bitmap_Combining on Unicode(combining);
+
+-- Requêtes utilisant les deux index bitmap créés
+explain plan for
+select * from Unicode where combining = 1 and mirrored = 'N';
+
+/* L'utilisation des index bitmap permet de vérifier très rapidement les cas où les deux conditions sont respectées
+    Les index bitmap sont ici utilisés car les colonnes combining et mirrored ne prennent que deux types de valeurs :
+    combining prend les valeurs 0 ou 1 et mirrored les valeurs 'N' ou 'Y' */
+
+
+-- Utilisation de l'opérateur PARTITION : accès aux enregistrements par l’un des fragments de la table
+
+-- Création d'une table partitionnée
+create table Partitions(
+    nb number
+    )
+partition by range(nb)(
+partition inf10 values less than(10),
+partition inf100 values less than(100),
+partition inf1000 values less than(1000),
+partition sup1000 values less than (MAXVALUE)
+);
+
+-- Insertion d'une ligne dans chaque partition de la table Partitions
+insert into Partitions values (5);
+insert into Partitions values (50);
+insert into Partitions values (500);
+insert into Partitions values (5000);
+
+-- Requête sur la table partitionnée
+select * from Partitions;
+select * from table(dbms_xplan.display_cursor(null, null, 'ALL +OUTLINE'));
+
+/* L'opérateur partition est utilisée par l'optimiseur pour rechercher des tuples sur une table partitionnée */
+
+
+-- Utilisation de l'opérateur MAT_VIEW : recherche d’enregistrements à partir d’une vue matérialisée
+
+-- Création de la vue matérialisée
+create materialized view Vue_Join_Unicode as
+    select U1.codepoint from Unicode U1 join Unicode U2 on U1.codepoint = U2.lowercase
+        where U1.mirrored = 'N';
+
+-- Requête sur la vue matérialisée :
+explain plan for
+select * from Vue_Join_Unicode where codepoint like '0%';
+
+/* Oracle utilise donc l'opérateur MAT_VIEW (full access ici) pour rechercher sur une vue matérialisée */
+
+
+/* REQUETES RECURSIVES */
+
+-- Création de la table Edge
+create table Edge (
+    f number not null,
+    t number not null,
+    constraint PK_Edge primary key (t, f)
+    );
+
+-- Ajout d'arcs grâce à un petit script python :
+/*
+for i in range(1,40):
+    print("insert into Edge values ({},{});".format(i, i+1))
+*/
+--> produit les commandes suivantes :
+insert into Edge values (1,2);
+insert into Edge values (2,3);
+insert into Edge values (3,4);
+insert into Edge values (4,5);
+            ...
+insert into Edge values (39,40);
+
+-- Première requête récursive :
+WITH trcl(f,t) AS (
+SELECT * FROM Edge
+UNION ALL
+SELECT g.f, t.t FROM Edge g, trcl t WHERE g.t = t.f
+)
+SELECT t FROM trcl WHERE f=1 ;
+
+/*
+Explications de la requête récursive
+A partir de la table Edge, on consrtuit une nouvelle table trcl dans laquelle on associe à chaque noeud de la table Edge tous ses descendants.
+
+*/
+
+-- Utilisation d'un opérateur RECURSIVE pour gérer la récursion
