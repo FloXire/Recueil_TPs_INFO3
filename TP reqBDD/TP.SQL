@@ -391,19 +391,83 @@ insert into Edge values (3,4);
 insert into Edge values (4,5);
             ...
 insert into Edge values (39,40);
+-- Rajout d'un insert into a des fins de test:
+insert into Edge values (1,40);
+
 
 -- Première requête récursive :
 WITH trcl(f,t) AS (
 SELECT * FROM Edge
-UNION ALL
+UNION ALL -- message du SGBD : la clause WITH récursive doit utiliser une opération UNION ALL
 SELECT g.f, t.t FROM Edge g, trcl t WHERE g.t = t.f
 )
 SELECT t FROM trcl WHERE f=1 ;
 
 /*
 Explications de la requête récursive
-A partir de la table Edge, on consrtuit une nouvelle table trcl dans laquelle on associe à chaque noeud de la table Edge tous ses descendants.
+A partir de la table Edge, on construit une nouvelle table trcl dans laquelle on associe à chaque noeud de la table Edge tous ses descendants.
+*/
 
+-- Plan d'exécution :
+/*
+WITH trcl(f,t) AS ( SELECT * FROM Edge UNION ALL SELECT g.f, t.t FROM
+Edge g, trcl t WHERE g.t = t.f ) SELECT t FROM trcl WHERE f=1
+
+Plan hash value: 3117359776
+
+-----------------------------------------------------------------------------------------------------
+| Id  | Operation                                 | Name    | Rows  | Bytes | Cost (%CPU)| Time     |
+-----------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT                          |         |       |       |     7 (100)|          |
+|*  1 |  VIEW                                     |         |    81 |  2106 |     7  (15)| 00:00:01 |
+|   2 |   UNION ALL (RECURSIVE WITH) BREADTH FIRST|         |       |       |            |          |
+|   3 |    INDEX FAST FULL SCAN                   | PK_EDGE |    40 |  1040 |     2   (0)| 00:00:01 |
+|*  4 |    HASH JOIN                              |         |    41 |  2132 |     5  (20)| 00:00:01 |
+|   5 |     INDEX FAST FULL SCAN                  | PK_EDGE |    40 |  1040 |     2   (0)| 00:00:01 |
+|   6 |     RECURSIVE WITH PUMP                   |         |       |       |            |          |
+-----------------------------------------------------------------------------------------------------
 */
 
 -- Utilisation d'un opérateur RECURSIVE pour gérer la récursion
+
+-- Deuxième requête récursive :
+WITH trcl(t) AS (
+SELECT t FROM Edge WHERE f = 1
+UNION ALL
+SELECT g.t FROM Edge g, trcl t WHERE g.f = t.t
+)
+SELECT t FROM trcl ;
+
+/*
+A la différence de la première requête celle-ci ne prend que la descendance du noeud 1
+--> on limite le nombre de tuples à chaque étape de la récursion, cette requête est donc plus efficace
+*/
+
+-- Plan d'exécution :
+/*
+WITH trcl(t) AS ( SELECT t FROM Edge WHERE f = 1 UNION ALL SELECT g.t
+FROM Edge g, trcl t WHERE g.f = t.t ) SELECT t FROM trcl
+
+Plan hash value: 3567812058
+
+-----------------------------------------------------------------------------------------------------
+| Id  | Operation                                 | Name    | Rows  | Bytes | Cost (%CPU)| Time     |
+-----------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT                          |         |       |       |     7 (100)|          |
+|   1 |  VIEW                                     |         |     4 |    52 |     7  (15)| 00:00:01 |
+|   2 |   UNION ALL (RECURSIVE WITH) BREADTH FIRST|         |       |       |            |          |
+|*  3 |    INDEX FAST FULL SCAN                   | PK_EDGE |     2 |    52 |     2   (0)| 00:00:01 |
+|*  4 |    HASH JOIN                              |         |     2 |    78 |     5  (20)| 00:00:01 |
+|   5 |     RECURSIVE WITH PUMP                   |         |       |       |            |          |
+|   6 |     INDEX FAST FULL SCAN                  | PK_EDGE |    40 |  1040 |     2   (0)| 00:00:01 |
+-----------------------------------------------------------------------------------------------------
+*/
+
+/*
+--> Les deux plans d'exécution sont similaires et font appel à l'opérateur RECURSIVE WITH PUMP
+La différence remarquable est sur le nombre de lignes (colonne rows dans le plan d'exécution) qui sont
+traitées par chaque requête notamment pour le premier opérateur INDEX FAST FULL SCAN (40 contre 2 lignes)
+*/
+
+
+-- FIN DU TP :)
