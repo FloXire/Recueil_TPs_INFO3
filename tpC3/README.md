@@ -1,4 +1,4 @@
-# Lib_Liste-Pile-File
+# Lib_Liste
 
-Librairie en C : création et manipulation de structures listes chainées, files et piles.
+Librairie en C : création et manipulation de structures listes chainées.
 Construction possible avec make.
