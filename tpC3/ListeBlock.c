@@ -15,8 +15,8 @@ SCell* delPtrCell();
 
 struct Block
 {
-    DataBlock value;
-    Block *previousBlock;
+    DataBlock dataBlock;
+    //Block *previousBlock;
     Block *followingBlock;
 };
 
@@ -38,18 +38,30 @@ SListBlock* CreateListBlock()
         exit(EXIT_FAILURE);
     }
 
-    listBlock->nbCells = 0;
+    listBlock->nbBlocks = 0;
     listBlock->first = NULL;
     listBlock->last = NULL;
 
     return listBlock;
 }
 
-
-Block* CreateBlock()
+Block* createBlock()
 {
     Block *newBlock;
     newBlock = (Block*) malloc(sizeof(newBlock));
+
+    if (newBlock == NULL) exit(EXIT_FAILURE);
+
+    //newBlock->previousBlock = NULL;
+    newBlock->followingBlock = NULL;
+
+    // Initialisation de toutes les structures à NULL
+    for (int i=0; i<SIZE_BLOCK; i++)
+    {
+        newBlock->dataBlock[i] = NULL;
+    }
+
+    return newBlock;
 }
 
 SCell* getEmptyCellInBLock(Block *block)
@@ -65,14 +77,7 @@ SCell* getEmptyCellInBLock(Block *block)
 
 SCell* getPtrNewCell(SCellList *listBlock)
 {
-    if (listBlock->first != NULL)
-    {
-        Block currentBlock = listBlock->first;
-    }
-    else // La liste de bloc est vide, on créé un premier bloc
-    {
-
-    }
+    Block currentBlock = listBlock->first;
 
     while (currentBlock != NULL)
     {
@@ -81,10 +86,32 @@ SCell* getPtrNewCell(SCellList *listBlock)
         {
             return newCell;
         }
+
+        currentBlock = currentBlock->followingBlock;
     }
 
-    // Ici, on n'a pas trouvé de places disponibles -> on créé un nouveau bloc à la fin
+    Block *newBlock = createBlock();
 
+    // Si la liste est vide
+    if (listBlock->first == NULL)
+    {
+        listBlock->first = newBlock;
+    }
+    else
+    {
+        //newBlock->previousBlock = listBlock->last;
+        list->last->followingBlock = newBlock;
+    }
 
+    listBlock->last = newBlock;
+    listBlock->nbBlocks++;
 
+    // On retourne l'adresse de la première cellule du nouveau bloc
+    return &(newBlock->dataBlock[0]);
 }
+
+/* A faire :  */
+
+// Fonction de suppression d'une cellule (+ potentiellement libération d'un bloc)
+// Faire la jonction entre ListeBlock.c et Liste.c (remplacer les malloc par des getPtrCell et les suppression par un appel à la nouvelle fonction d'une cellule)
+// Comparaison de l'accélération obtenue
