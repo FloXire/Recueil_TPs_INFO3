@@ -1,0 +1,20 @@
+﻿  chaine.cpp
+  TP1.cpp
+c:\users\e168386d\source\repos\tp1\tp1\tp1.cpp(22): error C2228: la partie gauche de '.getString' doit avoir un class/struct/union
+c:\users\e168386d\source\repos\tp1\tp1\tp1.cpp(23): error C2228: la partie gauche de '.getSize' doit avoir un class/struct/union
+c:\users\e168386d\source\repos\tp1\tp1\tp1.cpp(25): error C2228: la partie gauche de '.replaceString' doit avoir un class/struct/union
+c:\users\e168386d\source\repos\tp1\tp1\tp1.cpp(27): error C2228: la partie gauche de '.getString' doit avoir un class/struct/union
+c:\users\e168386d\source\repos\tp1\tp1\tp1.cpp(28): error C2228: la partie gauche de '.getSize' doit avoir un class/struct/union
+c:\users\e168386d\source\repos\tp1\tp1\tp1.cpp(22): warning C4473: 'printf_s' : nombre insuffisant d'arguments passés pour la chaîne de format
+  c:\users\e168386d\source\repos\tp1\tp1\tp1.cpp(22): note: les espaces réservés et leurs paramètres attendent des arguments 1 variadiques, mais des arguments 0 ont été fournis
+  c:\users\e168386d\source\repos\tp1\tp1\tp1.cpp(22): note: l'argument variadique manquant 1 est demandé par la chaîne de format '%s'
+c:\users\e168386d\source\repos\tp1\tp1\tp1.cpp(23): warning C4473: 'printf_s' : nombre insuffisant d'arguments passés pour la chaîne de format
+  c:\users\e168386d\source\repos\tp1\tp1\tp1.cpp(23): note: les espaces réservés et leurs paramètres attendent des arguments 1 variadiques, mais des arguments 0 ont été fournis
+  c:\users\e168386d\source\repos\tp1\tp1\tp1.cpp(23): note: l'argument variadique manquant 1 est demandé par la chaîne de format '%d'
+c:\users\e168386d\source\repos\tp1\tp1\tp1.cpp(27): warning C4473: 'printf_s' : nombre insuffisant d'arguments passés pour la chaîne de format
+  c:\users\e168386d\source\repos\tp1\tp1\tp1.cpp(27): note: les espaces réservés et leurs paramètres attendent des arguments 1 variadiques, mais des arguments 0 ont été fournis
+  c:\users\e168386d\source\repos\tp1\tp1\tp1.cpp(27): note: l'argument variadique manquant 1 est demandé par la chaîne de format '%s'
+c:\users\e168386d\source\repos\tp1\tp1\tp1.cpp(28): warning C4473: 'printf_s' : nombre insuffisant d'arguments passés pour la chaîne de format
+  c:\users\e168386d\source\repos\tp1\tp1\tp1.cpp(28): note: les espaces réservés et leurs paramètres attendent des arguments 1 variadiques, mais des arguments 0 ont été fournis
+  c:\users\e168386d\source\repos\tp1\tp1\tp1.cpp(28): note: l'argument variadique manquant 1 est demandé par la chaîne de format '%d'
+  Génération de code en cours...
