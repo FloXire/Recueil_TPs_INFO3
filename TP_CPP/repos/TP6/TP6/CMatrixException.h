@@ -16,11 +16,13 @@ public:
 
 	char* getMessage() const;
 
+	// Les différentes erreurs possibles
 	enum CodeErreur
 	{
 		BadSize,
 		Overflow,
 		DivisionByZero,
+		ImpossibleOperation,
 		Unknown
 	};
 

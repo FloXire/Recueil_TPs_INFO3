@@ -9,6 +9,7 @@ CMatrixException::CMatrixException(const int& errCode)
 {
 	errorMessage = nullptr;
 
+	// Traitement des différentes erreurs possibles
 	switch (errCode)
 	{
 		case CodeErreur::BadSize:
@@ -26,6 +27,11 @@ CMatrixException::CMatrixException(const int& errCode)
 			setMessage("[DivisionByZero] Erreur car tentative de division par zero");
 			break;
 		}
+		case CodeErreur::ImpossibleOperation:
+		{
+			setMessage("[ImpossibleOperation] Erreur car tentative de multiplication de matrice/vecteurs de dimensions non compatibles");
+			break;
+		}
 		default:
 		{
 			setMessage("[Unknown] Erreur inconnue");
@@ -40,11 +46,13 @@ CMatrixException::~CMatrixException()
 		delete[] errorMessage;
 }
 
+// Permet d'afficher l'erreur
 char* CMatrixException::getMessage() const
 {
 	return errorMessage;
 }
 
+// Ecriture du message d'erreur dans la variable errorMessage
 void CMatrixException::setMessage(const char* str)
 {
 	unsigned int sizeStr = strlen(str);

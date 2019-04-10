@@ -19,11 +19,20 @@ public:
 	T operator()(int, int) const;
 	T& operator()(int, int);
 
+	// Permet d'afficher la matrice complète de façon simple grâce à la surchage de l'opérateur <<
+	template<class T, int L, int C>
+	friend std::ostream& operator<<(std::ostream&, const CMatrix<T, L, C>&); // Fonction amie qui a accès à l'attribut private tab
+
+	/* 
+	Ces 4 fonctions ont été remplacées par des lambda (ou des foncteurs). 
+	Le mot clé static permet de pouvoir passer ces fonctions en paramètre d'une autre fonction
+	*/
 	static void sum(T&, double);
 	static void diff(T&, double);
 	static void mult(T&, double);
 	static void div(T&, double);
 
+	// Surcharge d'opérateurs
 	void operator+=(double);
 	void operator-=(double);
 	void operator*=(double);
@@ -63,16 +72,13 @@ private:
 	};
 
 
-	/* FONCTEURS */
+	/* DECLARATION DES FONCTEURS */
 
 	Mult multiplication;
 	Div division;
 	Sum somme;
 	Diff difference;
 };
-
-template<class T, int N>
-T prodScalaire(const CMatrix<T, N, 1>&, const CMatrix<T, N, 1>&);
 
 template<class T, int L, int C>
 CMatrix<T, L, C>::CMatrix()
@@ -86,6 +92,7 @@ CMatrix<T, L, C>::CMatrix()
 	}
 }
 
+// Initialisation de la matrice avec une initializer_list
 template<class T, int L, int C>
 CMatrix<T, L, C>::CMatrix(std::initializer_list<T> list)
 {
@@ -134,7 +141,7 @@ T CMatrix<T, L, C>::operator()(int i, int j) const
 	return tab[i][j];
 }
 
-// Permet de transformer une case en r-value pour la modifier
+// Permet de transformer et récupérer une case en r-value pour la modifier
 template<class T, int L, int C>
 T& CMatrix<T, L, C>::operator()(int i, int j)
 {
@@ -179,7 +186,7 @@ void CMatrix<T, L, C>::div(T& caseArr, double a)
 template<class T, int L, int C>
 void CMatrix<T, L, C>::operator+=(double a)
 {
-	operators(a, [](T& arrCase, double a) { arrCase += static_cast<T>(a); }); // ou operators (a, somme);
+	operators(a, [](T& arrCase, double a) { arrCase += static_cast<T>(a); }); // ou operators (a, somme); pour utiliser le foncteur
 }
 
 template<class T, int L, int C>
@@ -243,16 +250,77 @@ inline void CMatrix<T, L, C>::Diff::operator()(T & arrCase, int b)
 	arrCase -= b;
 }
 
-template<class T, int N = 3>
-inline T prodScalaire(CMatrix<T, N, 1>& vect1, CMatrix<T, N, 1>& vect2)
+// Produit de deux vecteurs template pouvant être de types différents
+template<class T1, class T2, int N1, int N2>
+auto prodScalaire(CMatrix<T1, N1, 1>& vect1, CMatrix<T2, N2, 1>& vect2) 
+-> decltype(vect1[0][0] * vect2[0][0]) // decltype permet de déterminer le type de retour
 {
-	T res = 0;
-	for (int i = 0; i < N; i++)
+	if (N1 != N2) // Calcul impossible
+	{
+		throw CMatrixException(CMatrixException::CodeErreur::ImpossibleOperation);
+	}
+
+	decltype(vect1[0][0] * vect2[0][0]) res = 0;
+
+	for (unsigned int i = 0; i < N1; i++)
 	{
 		res += vect1[i][0] * vect2[i][0];
 	}
 
 	return res;
+}
+
+/*
+L1 et C1 : nombre de lignes et de colonnes de mat1
+L2 et C2 : nombre de lignes et de colonnes de mat2
+*/
+// Produit de deux matrices template pouvant être de types différents
+template<class T1, class T2, int L1, int L2, int C1, int C2>
+auto matMult(CMatrix<T1, L1, C1>& mat1, CMatrix<T2, L2, C2>& mat2)
+-> CMatrix<decltype(mat1[0][0] * mat2[0][0]), L1, C2> // decltype permet de déterminer le type de valeur dans la matrice de retour
+{
+	if (C1 != L2) // Calcul impossible
+	{
+		throw CMatrixException(CMatrixException::CodeErreur::ImpossibleOperation);
+	}
+
+	CMatrix<decltype(mat1[0][0] * mat2[0][0]), L1, C2> res; // Déclaration de la matrice de type decltype()
+
+	for (unsigned int i = 0; i < L1; i++)
+	{
+		for (unsigned int j = 0; j < C2; j++)
+		{
+			res[i][j] = 0;
+
+			for (unsigned int k = 0; k < C1; k++)
+			{
+				res[i][j] += mat1[i][k] * mat2[k][j];
+			}
+		}
+	}
+
+	return res;
+}
+
+// Permet de pouvoir afficher la matrice grâce à std::cout << mat << std::endl;
+template<class T, int L, int C>
+std::ostream& operator<<(std::ostream &stream, const CMatrix<T, L, C> &mat)
+{
+	for (unsigned int i = 0; i < L; i++)
+	{
+		stream << "[";
+		for (unsigned int j = 0; j < C; j++)
+		{
+			stream << mat.tab[i][j];
+			if (j != C - 1)
+			{
+				stream << ", ";
+			}
+		}
+		stream << "]" << std::endl;
+	}
+
+	return stream;
 }
 
 template class CMatrix<int>;
