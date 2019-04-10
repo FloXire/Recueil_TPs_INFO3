@@ -1,9 +1,16 @@
 #ifndef _LISTE_H
 	#define _LISTE_H
 
-typedef int Data;
 typedef struct SCell SCell;
 typedef struct SList SList;
+
+union typeData
+{
+	int i;
+	SCell **block;
+};
+
+typedef union typeData Data;
 
 SList* CreateList();
 void DeleteList(SList *list);
