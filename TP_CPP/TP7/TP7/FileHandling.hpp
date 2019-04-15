@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <string>
 #include <iostream>
+#include <fstream>
+#include <regex>
 
 class FileHandling
 {
@@ -40,10 +42,12 @@ private:
 };
 
 template <class F>
-void extractWords(const char *file, F &func)
+void extractWords(const char *file, F& ws)
 {
 	std::ifstream fileStream;
-	std::string word;
+	std::string line;
+	int numLine;
+	int numWord;
 
 	fileStream.open(file);
 
@@ -54,35 +58,51 @@ void extractWords(const char *file, F &func)
 	}
 	else
 	{
-		while (file >> word)
+		numLine = 1;
+
+		while (!fileStream.eof())
 		{
-			func(word);
+			std::getline(fileStream, line);
+
+			std::regex pattern(R"#(\w[\w\-]*)#");
+			auto start = std::sregex_iterator(line.begin(), line.end(), pattern);
+			auto end = std::sregex_iterator();
+			
+			numWord = 1;
+			for (std::sregex_iterator i = start; i != end; ++i)
+			{
+				std::smatch match = *i;
+				std::string match_str = match.str();
+
+				std::transform(match_str.begin(), match_str.end(), match_str.begin(), tolower);
+				if (!ws(line, numLine, numWord, match_str))
+					break;
+
+				numWord++;
+			}
+
+			numLine++;
 		}
 	}
 }
 
-void foncteur(std::string word)
-{
-	std::cout << word << std::endl;
-}
-
-template <int I=0, int Limit=0, class F>
-void IterateOnFileDir(const char *baseDir,F &func)
+template <int I = 0, int Limit = 0, class F>
+void IterateOnFileDir(const char *baseDir, F& ws)
 {
 	std::string fileName;
 
 	FileHandling dirList(baseDir);
-	int i=0;
-	while ((Limit==0 || i<Limit) && dirList.GetNextFile(fileName))
+	int i = 0;
+	while ((Limit == 0 || i<Limit) && dirList.GetNextFile(fileName))
 	{
 		std::string file(baseDir);
-		file+=fileName;
+		file += fileName;
 
-		func(file.c_str());
-		extractWords(file.c_str(), foncteur);
+		std::cout << file.c_str() << std::endl;
+		extractWords(file.c_str(), ws);
 
 		++i;
-		if (I!=0 && i%I==0)
+		if (I != 0 && i%I == 0)
 		{
 			std::cout << i << " fichier";
 			if (i>1) std::cout << 's';

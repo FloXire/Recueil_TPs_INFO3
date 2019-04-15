@@ -186,3 +186,4 @@ size_t FileHandling::GetFileSize(const char * const file)
 	return(st.st_size);
 #endif
 }
+

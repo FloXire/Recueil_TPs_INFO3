@@ -1,13 +1,8 @@
 #include <locale>
+#include <string>
 #include <iostream>
-#include <fstream>
 #include "FileHandling.hpp"
-
-void test(const char *file)
-{
-	std::cout << file << std::endl;
-}
-
+#include "CWordStat.h"
 
 
 int main()
@@ -16,12 +11,19 @@ int main()
 	// Par défault la locale en C (codage ASCII 7 bits) ; sous Unix, la locale s'écrit "fr_FR"
 	std::locale::global(std::locale("fr-FR"));
 
+	CWordStat ws;
+
 	//...
-	IterateOnFileDir<100,6675>("./textes/output/",test);
+	IterateOnFileDir<1, 10>("./textes/output/", ws);
 	//...
 
 	int i;
 	std::cin >> i;
+
+	ws.printMap();
+
+	int j;
+	std::cin >> j;
 
 	return(EXIT_SUCCESS);
 }
