@@ -2,12 +2,12 @@
 
 #include <map>
 #include <string>
-
+#include <vector>
 
 class CWordStat
 {
 private:
-	std::map<std::string, unsigned int> occurences;
+	std::vector<std::string> sortVect;
 
 public:
 	CWordStat();
@@ -20,5 +20,10 @@ public:
 	bool operator()(std::string&, int, int, std::string);
 
 	void printMap();
+	void printVect();
+
+	void sortFrequency();
+
+	std::map<std::string, unsigned int> occurences;
 };
 

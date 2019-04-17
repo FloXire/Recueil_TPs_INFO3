@@ -1,6 +1,7 @@
 #include <locale>
 #include <string>
 #include <iostream>
+#include <process.h> // system("pause")
 #include "FileHandling.hpp"
 #include "CWordStat.h"
 
@@ -14,16 +15,13 @@ int main()
 	CWordStat ws;
 
 	//...
-	IterateOnFileDir<1, 10>("./textes/output/", ws);
+	IterateOnFileDir<10, 10>("./textes/output/", ws);
 	//...
 
-	int i;
-	std::cin >> i;
+	ws.sortFrequency();
+	ws.printVect();
 
-	ws.printMap();
-
-	int j;
-	std::cin >> j;
+	system("pause");
 
 	return(EXIT_SUCCESS);
 }
