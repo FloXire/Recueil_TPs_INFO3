@@ -17,13 +17,35 @@ CIndex::CIndex(const char *file)
 	}
 }
 
+void CIndex::operator()(const char *fileName)
+{
+	SDoc* doc = new SDoc(fileName);
+	vectDoc.push_back(doc);
+}
+
 bool CIndex::operator()(std::string& line, int numLine, int numWord, std::string word)
 {
-	if (numLine == 1) // Nouveau fichier, on crée une nouvelle instance de SDoc
+	SDoc* currentDoc = vectDoc[vectDoc.size() - 1];
+
+	if (numLine == 1) // Le numéro de ligne correspond au titre
 	{
-		SDoc* doc = new SDoc;
-		doc->name = "";
-		doc->title = "";
+		// Si on n'a pas déjà fixé le titre, on le fait
+		if (currentDoc->title != line)
+			currentDoc->title = line;
+	}
+
+	// Si le mot n'est pas dans la stop word list
+	if (indexSet.find(word) != indexSet.end())
+	{
+		// Si le mot n'est pas déjà dans wordFrequency
+		if (currentDoc->wordFrequency.find(word) == currentDoc->wordFrequency.end())
+		{
+			currentDoc->wordFrequency.insert(std::make_pair(word, 1));
+		}
+		else
+		{
+			currentDoc->wordFrequency[word]++;
+		}
 	}
 
 	return true;

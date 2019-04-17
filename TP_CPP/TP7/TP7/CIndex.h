@@ -15,6 +15,8 @@ private:
 		std::string name;
 		std::string title;
 		std::map<std::string, unsigned int> wordFrequency;
+
+		SDoc(const char* fileName) : name(fileName) {};
 	};
 
 	std::vector<SDoc*> vectDoc;
@@ -28,6 +30,7 @@ public:
 	CIndex& operator=(const CIndex&) = default;
 	CIndex& operator=(CIndex&&) = default;
 
+	void operator()(const char*);
 	bool operator()(std::string&, int, int, std::string);
 
 	void printSet();
