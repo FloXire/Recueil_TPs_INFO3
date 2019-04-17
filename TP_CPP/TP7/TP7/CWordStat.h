@@ -17,6 +17,7 @@ public:
 	CWordStat& operator=(const CWordStat&) = default;
 	CWordStat& operator=(CWordStat&&) = default;
 
+	void operator()(const char*);
 	bool operator()(std::string&, int, int, std::string);
 
 	void printMap();

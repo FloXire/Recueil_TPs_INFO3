@@ -12,14 +12,14 @@ int main()
 	// Par défault la locale en C (codage ASCII 7 bits) ; sous Unix, la locale s'écrit "fr_FR"
 	std::locale::global(std::locale("fr-FR"));
 
-	//CWordStat ws;
+	CWordStat ws;
 
 	//...
-	//IterateOnFileDir<100, 6675>("./textes/output/", ws);
+	IterateOnFileDir<100, 6675>("./textes/output/", ws);
 	//...
 
-	//ws.sortFrequency();
-	//ws.saveStopWordList();
+	ws.sortFrequency();
+	ws.saveStopWordList();
 
 	CIndex index("stopWordList.txt");
 

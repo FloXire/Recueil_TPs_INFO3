@@ -17,6 +17,18 @@ CIndex::CIndex(const char *file)
 	}
 }
 
+bool CIndex::operator()(std::string& line, int numLine, int numWord, std::string word)
+{
+	if (numLine == 1) // Nouveau fichier, on crée une nouvelle instance de SDoc
+	{
+		SDoc* doc = new SDoc;
+		doc->name = "";
+		doc->title = "";
+	}
+
+	return true;
+}
+
 void CIndex::printSet()
 {
 	for (std::set<std::string>::iterator it = indexSet.begin(); it != indexSet.end(); it++)

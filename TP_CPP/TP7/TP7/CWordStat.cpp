@@ -1,4 +1,6 @@
 #include "CWordStat.h"
+#include "ExtractWords.h"
+
 #include <iostream>
 #include <utility>
 #include <algorithm>
@@ -6,6 +8,11 @@
 
 CWordStat::CWordStat()
 {
+}
+
+void CWordStat::operator()(const char *file)
+{
+	extractWords(file, *this);
 }
 
 bool CWordStat::operator()(std::string& line, int numLine, int numWord, std::string word)

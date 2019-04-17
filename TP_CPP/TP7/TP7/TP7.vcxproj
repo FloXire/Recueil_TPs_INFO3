@@ -123,6 +123,7 @@
   <ItemGroup>
     <ClInclude Include="CIndex.h" />
     <ClInclude Include="CWordStat.h" />
+    <ClInclude Include="ExtractWords.h" />
     <ClInclude Include="FileHandling.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

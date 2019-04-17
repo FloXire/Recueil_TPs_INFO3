@@ -2,9 +2,6 @@
 
 #include <stdlib.h>
 #include <string>
-#include <iostream>
-#include <fstream>
-#include <regex>
 
 class FileHandling
 {
@@ -41,53 +38,9 @@ private:
 	DIRHANDLE hDir;
 };
 
-template <class F>
-void extractWords(const char *file, F& ws)
-{
-	std::ifstream fileStream;
-	std::string line;
-	int numLine;
-	int numWord;
-
-	fileStream.open(file);
-
-	if (fileStream.fail())
-	{
-		std::cerr << "Impossible d'accéder au fichier" << std::endl;
-		exit(-1);
-	}
-	else
-	{
-		numLine = 1;
-
-		while (!fileStream.eof())
-		{
-			std::getline(fileStream, line);
-
-			std::regex pattern(R"#(\w[\w\-]*)#");
-			auto start = std::sregex_iterator(line.begin(), line.end(), pattern);
-			auto end = std::sregex_iterator();
-			
-			numWord = 1;
-			for (std::sregex_iterator i = start; i != end; ++i)
-			{
-				std::smatch match = *i;
-				std::string match_str = match.str();
-
-				std::transform(match_str.begin(), match_str.end(), match_str.begin(), tolower);
-				if (!ws(line, numLine, numWord, match_str))
-					break;
-
-				numWord++;
-			}
-
-			numLine++;
-		}
-	}
-}
 
 template <int I = 0, int Limit = 0, class F>
-void IterateOnFileDir(const char *baseDir, F& ws)
+void IterateOnFileDir(const char *baseDir, F& func)
 {
 	std::string fileName;
 
@@ -98,8 +51,7 @@ void IterateOnFileDir(const char *baseDir, F& ws)
 		std::string file(baseDir);
 		file += fileName;
 
-		//std::cout << file.c_str() << std::endl;
-		extractWords(file.c_str(), ws);
+		func(file.c_str());
 
 		++i;
 		if (I != 0 && i%I == 0)
