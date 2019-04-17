@@ -98,7 +98,7 @@ void IterateOnFileDir(const char *baseDir, F& ws)
 		std::string file(baseDir);
 		file += fileName;
 
-		std::cout << file.c_str() << std::endl;
+		//std::cout << file.c_str() << std::endl;
 		extractWords(file.c_str(), ws);
 
 		++i;

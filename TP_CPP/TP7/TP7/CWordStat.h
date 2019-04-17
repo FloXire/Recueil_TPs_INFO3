@@ -23,6 +23,7 @@ public:
 	void printVect();
 
 	void sortFrequency();
+	void saveStopWordList();
 
 	std::map<std::string, unsigned int> occurences;
 };

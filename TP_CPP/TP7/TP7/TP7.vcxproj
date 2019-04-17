@@ -115,11 +115,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CIndex.cpp" />
     <ClCompile Include="CWordStat.cpp" />
     <ClCompile Include="FileHandling.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CIndex.h" />
     <ClInclude Include="CWordStat.h" />
     <ClInclude Include="FileHandling.hpp" />
   </ItemGroup>
