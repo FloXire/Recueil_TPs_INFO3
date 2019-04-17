@@ -17,16 +17,8 @@ void CWordStat::operator()(const char *file)
 
 bool CWordStat::operator()(std::string& line, int numLine, int numWord, std::string word)
 {
-	//std::cout << word << std::endl;
-	if (occurences.find(word) == occurences.end())
-	{
-		occurences.insert(std::make_pair(word, 1));
-	}
-	else
-	{
-		occurences[word]++;
-	}
-
+	// L'expression suivante est valable si le mot est ou n'est pas déjà dans occurences
+	occurences[word]++;
 	return true;
 }
 
@@ -38,47 +30,45 @@ void CWordStat::printMap()
 	}
 }
 
-void CWordStat::printVect()
+std::vector<std::pair<std::string, unsigned int>> CWordStat::sortFrequency()
 {
-	for (std::vector<std::string>::iterator it = sortVect.begin(); it != sortVect.end(); ++it)
-	{
-		std::cout << *it << " : " << occurences[*it] << std::endl;
-	}
-}
+	std::vector<std::pair<std::string, unsigned int>> sortedVect;
 
-void CWordStat::sortFrequency()
-{
 	// Remplissage du vecteur
-	for (std::map<std::string, unsigned int>::iterator it = occurences.begin(); it != occurences.end(); ++it)
+	for (auto &pair : occurences)
 	{
-		sortVect.push_back(it->first);
+		sortedVect.push_back(pair);
 	}
 
-	std::sort(sortVect.begin(), sortVect.end(), [this](std::string s1, std::string s2) { return this->occurences[s1] > this->occurences[s2]; });
+	// Tri du vecteur
+	std::sort(sortedVect.begin(), sortedVect.end(), [](const std::pair<std::string, unsigned int> &p1, const std::pair<std::string, unsigned int> &p2) { return p1.second > p2.second; });
+
+	return sortedVect;
 }
 
 void CWordStat::saveStopWordList()
 {
+	auto sortedVect = sortFrequency();
 	std::ofstream outputFile("stopWordList.txt");
 
-	auto limit1 = sortVect.size() / 5;
-	auto limit2 = sortVect.size() / 100;
+	auto limit1 = sortedVect.size() / 5;
+	auto limit2 = sortedVect.size() / 100;
 
-	std::vector<std::string>::iterator it = sortVect.begin();
-	std::vector<std::string>::reverse_iterator rit = sortVect.rbegin();
+	auto it = sortedVect.begin();
+	auto rit = sortedVect.rbegin();
 
 	// Ecriture des mots appraissant le plus fréquemment dans la stopWordList
-	while (occurences[*it] > limit1 && it != sortVect.end())
+	while (occurences[it->first] > limit1 && it != sortedVect.end())
 	{
-		outputFile << *it;
+		outputFile << it->first;
 		outputFile << "\n";
 		it++;
 	}
 
 	// Ecriture des mots appraissant le moins fréquemment dans la stopWordList
-	while (occurences[*rit] < limit2 && rit != sortVect.rend())
+	while (occurences[rit->first] < limit2 && rit != sortedVect.rend())
 	{
-		outputFile << *rit;
+		outputFile << rit->first;
 		outputFile << "\n";
 		rit++;
 	}

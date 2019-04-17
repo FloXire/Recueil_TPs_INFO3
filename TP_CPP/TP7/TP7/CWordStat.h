@@ -7,7 +7,8 @@
 class CWordStat
 {
 private:
-	std::vector<std::string> sortVect;
+	std::map<std::string, unsigned int> occurences;
+	std::vector<std::pair<std::string, unsigned int>> sortFrequency();
 
 public:
 	CWordStat();
@@ -21,11 +22,6 @@ public:
 	bool operator()(std::string&, int, int, std::string);
 
 	void printMap();
-	void printVect();
-
-	void sortFrequency();
 	void saveStopWordList();
-
-	std::map<std::string, unsigned int> occurences;
 };
 
