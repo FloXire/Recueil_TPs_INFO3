@@ -14,17 +14,23 @@ int main()
 	// Par défault la locale en C (codage ASCII 7 bits) ; sous Unix, la locale s'écrit "fr_FR"
 	std::locale::global(std::locale("fr-FR"));
 
-	/*
+	
 	CWordStat ws;
-	IterateOnFileDir<100, 6675>("./textes/output/", ws);
+	IterateOnFileDir<100, 6675>("./textes/", ws);
 	ws.saveStopWordList();
-	*/
+	
 	
 	CIndex index("stopWordList.txt");
-	IterateOnFileDir<100, 6675>("./textes/output/", index);
+	IterateOnFileDir<100, 6675>("./textes/", index);
 	index.calculate();
-	//index.printDocs("eau");
-	//index.printDocs("nucléaire");
+	
+	// Changement : la stopWordList a été raccourcies aux mots présents plus d'1 fois sur 5 et moins d'1 fois sur 1000
+	index.printDocs("croissante"); // Présent grâce au changement
+	index.printDocs("licorne"); // Présent grâce au changement
+	index.printDocs("albanie"); // Présent grâce au changement
+	index.printDocs("corruption"); // Présent grâce au changement
+	index.printDocs("déclarations"); // Présent même sans le changement
+	index.printDocs("centrafrique"); // Reste dans la stopWordList malgré le changement
 
 	system("pause");
 

@@ -52,7 +52,7 @@ void CWordStat::saveStopWordList()
 	std::ofstream outputFile("stopWordList.txt");
 
 	auto limit1 = sortedVect.size() / 5;
-	auto limit2 = sortedVect.size() / 100;
+	auto limit2 = sortedVect.size() / 1000;
 
 	auto it = sortedVect.begin();
 	auto rit = sortedVect.rbegin();
@@ -66,7 +66,7 @@ void CWordStat::saveStopWordList()
 	}
 
 	// Ecriture des mots appraissant le moins fréquemment dans la stopWordList
-	while (occurences[rit->first] < limit2 && rit != sortedVect.rend())
+	while (occurences[rit->first] <= limit2 && rit != sortedVect.rend())
 	{
 		outputFile << rit->first;
 		outputFile << "\n";

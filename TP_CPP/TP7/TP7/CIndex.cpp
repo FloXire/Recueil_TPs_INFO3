@@ -127,15 +127,15 @@ void CIndex::printMap()
 void CIndex::printDocs(const char *strWord)
 {
 	std::string word(strWord);
-	std::cout << "Mot : " << word << std::endl;
+	std::cout << "Mot : " << word << std::endl << std::endl;
 	std::cout << "Documents : " << std::endl << std::endl;
 
 	for (std::vector<SDoc*>::iterator itVect = indexMap[word].begin(); itVect != indexMap[word].end(); itVect++)
 	{
 		std::cout << "    - Emplacement : " << (*itVect)->name << std::endl;
-		std::cout << "    - Titre : " << (*itVect)->title << std::endl;
-		std::cout << "    - tfidf : " << (*itVect)->wordFrequency[word].tfidf << std::endl << std::endl;
+		//std::cout << "    - Titre : " << (*itVect)->title << std::endl;
+		//std::cout << "    - tfidf : " << (*itVect)->wordFrequency[word].tfidf << std::endl << std::endl;
 	}
 
-	std::cout << std::endl;
+	std::cout << std::endl << std::endl;
 }
