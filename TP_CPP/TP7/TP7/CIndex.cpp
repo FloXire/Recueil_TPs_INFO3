@@ -53,7 +53,7 @@ bool CIndex::operator()(std::string& line, int numLine, int numWord, std::string
 		currentDoc->wordFrequency[word].occurences++;
 
 		// Si le document n'est pas déjà dans le vecteur de document (accès au dernier document associé au mot car le foncteur est appelé dans l'ordre des documents)
-		if (!indexMap[word].empty() && indexMap[word][indexMap[word].size() - 1] != currentDoc)
+		if (indexMap[word].empty() || indexMap[word][indexMap[word].size() - 1] != currentDoc)
 			indexMap[word].push_back(currentDoc);
 	}
 
@@ -107,3 +107,35 @@ void CIndex::printVect()
 	}
 }
 
+void CIndex::printMap()
+{
+	for (std::unordered_map<std::string, std::vector<SDoc*>>::iterator itMap = indexMap.begin(); itMap != indexMap.end(); itMap++)
+	{
+		std::cout << "Mot : " << itMap->first << std::endl;
+		std::cout << "Documents : " << std::endl << std::endl;
+
+		for (std::vector<SDoc*>::iterator itVect = itMap->second.begin(); itVect != itMap->second.end(); itVect++)
+		{
+			std::cout << "    - Nom : " << (*itVect)->name << std::endl;
+			std::cout << "    - tfidf : " << (*itVect)->wordFrequency[itMap->first].tfidf << std::endl << std::endl;
+		}
+
+		std::cout << std::endl;
+	}
+}
+
+void CIndex::printDocs(const char *strWord)
+{
+	std::string word(strWord);
+	std::cout << "Mot : " << word << std::endl;
+	std::cout << "Documents : " << std::endl << std::endl;
+
+	for (std::vector<SDoc*>::iterator itVect = indexMap[word].begin(); itVect != indexMap[word].end(); itVect++)
+	{
+		std::cout << "    - Emplacement : " << (*itVect)->name << std::endl;
+		std::cout << "    - Titre : " << (*itVect)->title << std::endl;
+		std::cout << "    - tfidf : " << (*itVect)->wordFrequency[word].tfidf << std::endl << std::endl;
+	}
+
+	std::cout << std::endl;
+}

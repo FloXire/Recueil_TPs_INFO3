@@ -6,21 +6,25 @@
 #include "CWordStat.h"
 #include "CIndex.h"
 
+/* A éxecuter en release sous visual studio */
+
 int main()
 {
 	// Mise en place de la locale pour que la conversion de casse (std::lower) puisse gérer les caratères accentués
 	// Par défault la locale en C (codage ASCII 7 bits) ; sous Unix, la locale s'écrit "fr_FR"
 	std::locale::global(std::locale("fr-FR"));
 
+	/*
 	CWordStat ws;
 	IterateOnFileDir<100, 6675>("./textes/output/", ws);
 	ws.saveStopWordList();
-
-	/*
-	CIndex index("stopWordList.txt");
-	IterateOnFileDir<100, 100>("./textes/output/", index);
-	index.printVect();
 	*/
+	
+	CIndex index("stopWordList.txt");
+	IterateOnFileDir<100, 6675>("./textes/output/", index);
+	index.calculate();
+	//index.printDocs("eau");
+	//index.printDocs("nucléaire");
 
 	system("pause");
 

@@ -46,5 +46,7 @@ public:
 
 	void printSet();
 	void printVect();
+	void printMap();
+	void printDocs(const char*);
 };
 
