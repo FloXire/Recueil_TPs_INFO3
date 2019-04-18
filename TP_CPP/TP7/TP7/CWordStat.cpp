@@ -32,6 +32,7 @@ void CWordStat::printMap()
 
 std::vector<std::pair<std::string, unsigned int>> CWordStat::sortFrequency()
 {
+	// Vecteur de paires (mot, nombreOccurences)
 	std::vector<std::pair<std::string, unsigned int>> sortedVect;
 
 	// Remplissage du vecteur
@@ -40,7 +41,7 @@ std::vector<std::pair<std::string, unsigned int>> CWordStat::sortFrequency()
 		sortedVect.push_back(pair);
 	}
 
-	// Tri du vecteur
+	// Tri du vecteur par occurence décroissante
 	std::sort(sortedVect.begin(), sortedVect.end(), [](const std::pair<std::string, unsigned int> &p1, const std::pair<std::string, unsigned int> &p2) { return p1.second > p2.second; });
 
 	return sortedVect;
@@ -57,7 +58,7 @@ void CWordStat::saveStopWordList()
 	auto it = sortedVect.begin();
 	auto rit = sortedVect.rbegin();
 
-	// Ecriture des mots appraissant le plus fréquemment dans la stopWordList
+	// Ecriture des mots apparaissant le plus fréquemment (plus d'1 fois sur 5) dans la stopWordList
 	while (occurences[it->first] > limit1 && it != sortedVect.end())
 	{
 		outputFile << it->first;
@@ -65,7 +66,7 @@ void CWordStat::saveStopWordList()
 		it++;
 	}
 
-	// Ecriture des mots appraissant le moins fréquemment dans la stopWordList
+	// Ecriture des mots apparaissant le moins fréquemment (moins d'1 fois sur 1000) dans la stopWordList
 	while (occurences[rit->first] <= limit2 && rit != sortedVect.rend())
 	{
 		outputFile << rit->first;

@@ -15,6 +15,7 @@ CIndex::CIndex(const char *file)
 	std::ifstream inputFile(file);
 	std::string word;
 
+	// Remplissage du set avec la stopWordList
 	while (inputFile >> word)
 	{
 		indexSet.insert(word);
@@ -84,7 +85,7 @@ void CIndex::calculate()
 	}
 }
 
-void CIndex::threadCalc(unsigned int nbThreads, unsigned int numThread) //std::unordered_map<std::string, std::vector<SDoc*>>& map
+void CIndex::threadCalc(unsigned int nbThreads, unsigned int numThread)
 {
 	std::string word;
 	unsigned int compteur = 0;
@@ -93,9 +94,8 @@ void CIndex::threadCalc(unsigned int nbThreads, unsigned int numThread) //std::u
 	{
 		if (compteur % (nbThreads) == numThread) // Le thread courant est celui qui doit gérer le tri
 		{
-			//std::cout << "Le thread n°" << numThread << " trie à la position " << compteur;
-
 			word = itMap->first;
+			// Tri des documents associés au mot par tfidf décroissant
 			std::sort(itMap->second.begin(), itMap->second.end(), [&word](SDoc* doc1, SDoc* doc2) { return doc1->wordFrequency[word].tfidf > doc2->wordFrequency[word].tfidf; });
 		}
 
@@ -120,6 +120,9 @@ void CIndex::launchThreadCalc(unsigned int n)
 		threads[i].join();
 	}
 }
+
+
+/* Partie affichage */
 
 void CIndex::printSet()
 {

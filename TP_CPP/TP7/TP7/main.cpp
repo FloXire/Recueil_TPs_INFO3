@@ -17,16 +17,18 @@ int main()
 	// Par défault la locale en C (codage ASCII 7 bits) ; sous Unix, la locale s'écrit "fr_FR"
 	std::locale::global(std::locale("fr-FR"));
 
+	// Première itération sur les fichiers pour construire la stopWordList
 	CWordStat ws;
 	IterateOnFileDir<100, 6675>("./textes/", ws);
 	ws.saveStopWordList();
 
+	// Deuxième itération pour construire l'index inversé
 	CIndex index("stopWordList.txt");
 	IterateOnFileDir<100, 6675>("./textes/", index);
 	index.calculate();
-	
-	unsigned int nbCores = std::thread::hardware_concurrency();
 
+	// Partie multithreading pour optimiser le tri des documents par tfidf décroissant pour chaque mot
+	unsigned int nbCores = std::thread::hardware_concurrency();
 	std::cout << std::endl << "Votre processeur possède " << nbCores << " coeurs." << std::endl;
 
 	std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();

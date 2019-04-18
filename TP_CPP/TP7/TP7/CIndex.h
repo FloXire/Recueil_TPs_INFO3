@@ -43,8 +43,8 @@ public:
 	bool operator()(std::string&, int, int, std::string);
 
 	void calculate();
-	void threadCalc(unsigned int, unsigned int); // std::unordered_map<std::string, std::vector<SDoc*>>&
-	void launchThreadCalc(unsigned int);
+	void threadCalc(unsigned int, unsigned int); // Tri d'une partie d'indexMap
+	void launchThreadCalc(unsigned int); // Gère les thread, prend en paramètre le nombre de thread à lancer
 	
 	void printSet();
 	void printVect();

@@ -24,6 +24,7 @@ void extractWords(const char *file, F& func)
 	{
 		numLine = 1;
 
+		// Tant qu'on est pas arrivé à la fin du fichier
 		while (!fileStream.eof())
 		{
 			std::getline(fileStream, line);
@@ -31,11 +32,13 @@ void extractWords(const char *file, F& func)
 			auto end = std::sregex_iterator();
 
 			numWord = 1;
+			// Itération sur les mots de la ligne
 			for (std::sregex_iterator i = start; i != end; ++i)
 			{
 				std::smatch match = *i;
 				std::string match_str = match.str();
 
+				// Transformation du mot capturé par l'itérateur en minuscule
 				std::transform(match_str.begin(), match_str.end(), match_str.begin(), tolower);
 				if (!func(line, numLine, numWord, match_str))
 					break;
