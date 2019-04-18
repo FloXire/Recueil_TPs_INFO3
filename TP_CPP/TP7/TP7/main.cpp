@@ -32,7 +32,7 @@ int main()
 	std::cout << std::endl << "Votre processeur possède " << nbCores << " coeurs." << std::endl;
 
 	std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
-	index.launchThreadCalc(nbCores);
+	index.launchThreadCalc(nbCores); // Lance nbCores threads pour trier l'index
 	std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
 
 	std::chrono::duration<double> diff = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
