@@ -3,6 +3,8 @@
 
 #include <fstream>
 #include <iostream>
+#include <array>
+#include <thread>
 
 CIndex::CIndex() : CIndex("stopWordList.txt")
 {
@@ -64,9 +66,10 @@ void CIndex::calculate()
 {
 	/* Partie calcul de tous les tfidf */
 
+	std::string word;
 	for (std::unordered_map<std::string, std::vector<SDoc*>>::iterator itMap = indexMap.begin(); itMap != indexMap.end(); itMap++)
 	{
-		std::string word = itMap->first;
+		word = itMap->first;
 		// sizeVect est également au nombre de documents contenant le mot word
 		auto sizeVect = itMap->second.size();
 		
@@ -76,8 +79,45 @@ void CIndex::calculate()
 			(*itVect)->wordFrequency[word].tfidf = static_cast<float>((*itVect)->wordFrequency[word].occurences) / static_cast<float>(sizeVect);
 		}
 
-		/* Partie tri du vecteur de document associé à chaque mot de indexMap */
-		std::sort(itMap->second.begin(), itMap->second.end(), [&word](SDoc* doc1, SDoc* doc2) { return doc1->wordFrequency[word].tfidf > doc2->wordFrequency[word].tfidf; });
+		/* Partie tri du vecteur de document associé à chaque mot de indexMap */    // Déplacé dans threadCalc
+		//std::sort(itMap->second.begin(), itMap->second.end(), [&word](SDoc* doc1, SDoc* doc2) { return doc1->wordFrequency[word].tfidf > doc2->wordFrequency[word].tfidf; });
+	}
+}
+
+void CIndex::threadCalc(unsigned int nbThreads, unsigned int numThread) //std::unordered_map<std::string, std::vector<SDoc*>>& map
+{
+	std::string word;
+	unsigned int compteur = 0;
+
+	for (std::unordered_map<std::string, std::vector<SDoc*>>::iterator itMap = indexMap.begin(); itMap != indexMap.end(); itMap++)
+	{
+		if (compteur % (nbThreads) == numThread) // Le thread courant est celui qui doit gérer le tri
+		{
+			//std::cout << "Le thread n°" << numThread << " trie à la position " << compteur;
+
+			word = itMap->first;
+			std::sort(itMap->second.begin(), itMap->second.end(), [&word](SDoc* doc1, SDoc* doc2) { return doc1->wordFrequency[word].tfidf > doc2->wordFrequency[word].tfidf; });
+		}
+
+		compteur++;
+	}
+}
+
+void CIndex::launchThreadCalc(unsigned int n)
+{
+	unsigned int i;
+	std::vector<std::thread> threads;
+
+	// Lance n threads
+	for (i = 0; i < n; i++)
+	{
+		threads.push_back(std::thread([this, n, i]() { this->threadCalc(n, i); }));
+	}
+
+	// Attente de la terminaison des threads
+	for (i = 0; i < n; i++)
+	{
+		threads[i].join();
 	}
 }
 

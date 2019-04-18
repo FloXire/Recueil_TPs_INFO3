@@ -43,7 +43,9 @@ public:
 	bool operator()(std::string&, int, int, std::string);
 
 	void calculate();
-
+	void threadCalc(unsigned int, unsigned int); // std::unordered_map<std::string, std::vector<SDoc*>>&
+	void launchThreadCalc(unsigned int);
+	
 	void printSet();
 	void printVect();
 	void printMap();
