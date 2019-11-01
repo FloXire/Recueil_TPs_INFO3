@@ -1,0 +1,167 @@
+**********************************
+TP 5 - Moniteurs et sémaphores de comptage en pthread
+
+Partie 2 : Problème des lecteurs/rédacteurs
+
+Durée: 3h
+
+**********************************
+
+
+
+
+**********************************
+Resolution du probleme des lecteurs redacteurs avec les pthreads
+- Partie 2.1: avec des semaphores mutex uniquement (ou semaphores de comptage uniquement)
+- Partie 2.2: avec des moniteurs uniquement
+**********************************
+Contenu:
+
+* lecteurs-redacteurs-mutex.c : 
+Le fichier d'implementation des lecteurs redacteurs pour semaphores mutex uniquement (ou semaphores de comptage) qui contient:
+	lecteur()	: fonction principale des threads lecteurs 
+	redacteurs ()	: fonction principale des threads redacteurs
+	main()	 : fonction principale du processus (initialisation, demarrage/terminaison des threads, finalisation)
+
+
+* lecteurs-redacteurs-moniteur.c : 
+Le fichier d'implementation des lecteurs redacteurs pour les moniteurs uniquement (mutex et conditions) qui contient:
+	m_prologue_lecteur() et m_epilogue_lecteur(): les points d'entrée du moniteur pour les lecteurs
+	m_prologue_redacteur() et m_epilogue_redacteur(): les points d'entrée du moniteur pour les redacteurs
+	lecteur()	: fonction principale des threads lecteurs 
+	redacteurs ()	: fonction principale des threads redacteurs
+	main()	 : fonction principale du processus (initialisation, demarrage/terminaison des threads, finalisation)
+
+
+* semaphore-moniteur.h, semaphore-moniteur.c :
+Les fichiers d'implementation des semaphores de comptage avec les moniteurs pthreads
+
+
+* tprinf.h, tprinf.c :
+Les fichiers d'implementation d'un utilitaire tprinf et tfprintf
+printf prefixe par "seconds:microsecondes:pid: "), a utiliser pour dater tous les messages
+
+
+* macros-thread.h : 
+un fichier d'utiliaires (macros C) bien pratiques pour simplifier l'utilisation 
+des mutex et des conditions pthread
+
+
+* makefile : 
+le fichier de construction automatique
+	make all : construit touts les executables
+	make clean : efface tous les fichiers compiles
+
+
+
+*************************************
+*************************************
+Sujet de TP :
+*************************************
+*************************************
+Partie 2.1 : solution à base de sémaphores (mutex ou de comptage)
+fichier: lecteurs-redacteurs-mutex.c
+*************************************
+
+1) commencez par analyser en détail le contenu des différents fichiers
+
+2) compilez les fichiers et essayer le programme sans synchronisation. Que ce passe-t-il ?
+
+3) A l'aide de semaphores mutex pthreads (ou de semaphores de comptage) résolvez le probleme des lecteurs redacteurs dans lecteurs-redacteurs-mutex.c.
+Proposez 3 solutions différentes: équite, priorite lecteurs, priorite redacteurs
+Proposez égalemant une solution a base de semaphores de comptage.
+Validez les solutions a l'aide de l'outil JPNS, construisez les réseaux de pétri correspondant, et validez-les par simulation.
+Implémentez les solutions.
+utilisez un débogueur/dévermineur supportant le parallèlisme des threads (gdb, ddd, ...).
+
+4) Faites la preuve du bon fonctionnement de la solution priorite redacteur:
+- dessinez le chronogramme d'utilisation des operateurs wait et signal des mutex pour l'ensemble des threads lecteurs/redacteurs activés.
+
+*************************************
+Partie 2.2 : solution à base de moniteurs (mutex et conditions)
+fichier: lecteurs-redacteurs-moniteur.c
+*************************************
+
+5) A l'aide des outils moniteur des pthreads (mutex et conditions) résolvez le probleme des lecteurs redacteurs dans lecteurs-redacteurs-moniteur.c.
+proposez 3 solutions différentes: équite, priorite lecteurs, priorite redacteurs.
+Implémentez les solutions.
+utilisez un débogueur/dévermineur supportant le parallèlisme des threads (gdb, ddd, ...).
+
+6) Faites la preuve du bon fonctionnement de la solution priorite redacteur:
+- dessinez le chronogramme d'utilisation des fonctions de synchronisation (opérateurs de moniteur et de condition) pour l'ensemble des threads lecteurs/redacteurs activés.
+
+
+
+
+*************************************
+ANNEXES
+*************************************
+1) Déboguer les pthreads avec gdb
+
+Pour pouvoir controller les threads indépendamment, il suffit d'entrer la séquence de commandes suivante dans gdb:
+
+# Enable the async interface.
+set target-async 1
+# If using the CLI, pagination breaks non-stop.
+set pagination off
+# Finally, turn it on!
+set non-stop on
+
+Entrer ces commandes dans le fichier ~/.gdbinit pour qu'elles soient prises en compte automatiquement.
+
+Pour les détails, voir: Non-Stop Mode <https://sourceware.org/gdb/current/onlinedocs/gdb/Non_002dStop-Mode.html>
+
+
+
+
+2) Tutoriel débogueur gdb
+
+voir : Débuggage avec gdb <https://doc.ubuntu-fr.org/gdb>
+et Debugging Programs with Multiple Threads <https://sourceware.org/gdb/current/onlinedocs/gdb/Threads.html#Threads>
+
+
+commande		raccourci		effet
+run			r			lance le programme (s'arrête au prochain point d'arrêt)
+continue		c			relance le programme (s'arrête au prochain point d'arrêt)
+break xx		b xx			place un point d'arrêt à la ligne ou à la fonction xx
+info breakpoints	info breakpoints	liste les points d'arrêts
+delete			d			efface les points d'arrêts
+next			n			exécute une instruction (ne rentre pas dans les fonctions)
+step			s			exécute une instruction (rentre potentiellement dans les fonctions)
+finish			f			exécute les instructions jusqu'à la sortie de la fonction
+until xx		u xx			exécute les instructions jusqu'à la ligne xx
+watch var	 	w var			surveille la variable var
+print expr	 	p expr			interprète et affiche expr
+info threads	 				liste les threads en cours (* devant le thread courant)
+thread thread-id				thread id devient le thread courant
+
+
+
+
+3) Débogueur et IDE
+
+débogueurs seuls : gdb, DDD, Kdb, ...
+environnment de developpement (IDE) : eclipse, Kblocks, KDevelop, Code::Blocks, ...
+
+
+
+
+4) Pour deboguer les pthreads en linux dans netbeans. (préférer eclipse)
+
+Ceci peut être fait dans netbeans 7.0. Pour installer c/c++ dans netbeans, suivre les étapes suivantes: 
+- menu "tools/plugins" 
+- dans settings parametrer le proxy "proxy settings" cache.etu.univ-nantes.fr:3128 
+- dans settings, activez les sources "Certified Plugins, Netbeans Distribution, et Plugin Portal
+- dans "available plugins" rafraichir le catalogue (update ou refresh), puis installer c/c++
+
+Il faut aussi mettre à jour netbeans:
+- dans "update" rafraichir le catalogue (update ou refresh), puis bouton update
+
+La console gdb est accessible dans menu:  "window/debugging/debugger console"
+
+La fenêtre de contrôle des threads dans : "window/debugging/threads"
+
+Entrer les commandes de la 1ere partie dans le fichier ~/.gdbinit pour qu'elles soient prises en compte automatiquement.
+
+
+
